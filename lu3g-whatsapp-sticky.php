@@ -2,7 +2,9 @@
 /**
  * Plugin Name: LU3G WhatsApp Sticky
  * Description: Widget Elementor per un bottone sticky WhatsApp oppure un menu contatti espandibile (WhatsApp, chiamata, email, Google Maps).
- * Version:     1.4.0
+ * Version:     1.4.1
+ * Plugin URI:  https://github.com/lu3gofficial/lu3g-whatsapp-sticky
+ * Update URI:  https://github.com/lu3gofficial/lu3g-whatsapp-sticky
  * Author:      LU3G Agenzia Web
  * Text Domain: lu3g-wa-sticky
  * Requires Plugins: elementor
@@ -13,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LU3G_WA_VERSION', '1.4.0' );
+define( 'LU3G_WA_VERSION', '1.4.1' );
 define( 'LU3G_WA_URL', plugin_dir_url( __FILE__ ) );
 define( 'LU3G_WA_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -80,3 +82,10 @@ function lu3g_wa_register_assets() {
 
 	wp_add_inline_style( 'lu3g-wa-sticky', $css );
 }
+
+/**
+ * Aggiornamenti automatici dalle release GitHub di https://github.com/lu3gofficial/lu3g-whatsapp-sticky (vedi includes/class-updater.php).
+ * Fuori da ogni controllo su Elementor: il plugin si aggiorna anche dove Elementor è disattivato.
+ */
+require_once __DIR__ . '/includes/class-updater.php';
+LU3G_WhatsApp_Sticky_Updater::init( __FILE__ );

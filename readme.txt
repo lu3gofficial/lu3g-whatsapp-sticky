@@ -1,6 +1,6 @@
 === LU3G WhatsApp Sticky ===
 Requires Plugins: elementor
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 
 Widget Elementor "WhatsApp Sticky" con due modalità:
 - Solo WhatsApp: bottone fisso che apre WhatsApp (app su mobile, WhatsApp Web su desktop).
@@ -9,6 +9,8 @@ Widget Elementor "WhatsApp Sticky" con due modalità:
 Uso consigliato: inseriscilo nel template Footer (Theme Builder) così compare su tutto il sito.
 
 == Changelog ==
+= 1.4.1 =
+* Aggiornamenti automatici dalle release GitHub (lu3gofficial/lu3g-whatsapp-sticky) e link "Controlla aggiornamenti" nella pagina Plugin.
 = 1.4.0 =
 * Barra fissa attivabile separatamente su desktop, tablet e mobile (al posto del bottone).
 * Disposizione voci per dispositivo: icona sopra o accanto al testo.
