@@ -1,0 +1,536 @@
+/* ========== Base ========== */
+.lu3g-wa {
+	--lu3g-wa-x: 24px;
+	--lu3g-wa-y: 24px;
+	--lu3g-wa-size: 60px;
+	--lu3g-wa-item-size: 48px;
+	--lu3g-wa-gap: 12px;
+	--lu3g-wa-pulse: rgba(37, 211, 102, 0.5);
+	--lu3g-wa-ease: cubic-bezier(.34, 1.56, .64, 1); /* leggero rimbalzo */
+	position: fixed;
+	bottom: calc(var(--lu3g-wa-y) + env(safe-area-inset-bottom, 0px));
+	z-index: 9999;
+	line-height: 0;
+}
+.lu3g-wa--right { right: var(--lu3g-wa-x); }
+.lu3g-wa--left  { left: var(--lu3g-wa-x); }
+
+/* ========== Bottone principale ========== */
+:where(.lu3g-wa) .lu3g-wa__btn {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--lu3g-wa-size);
+	height: var(--lu3g-wa-size);
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background-color: #25D366;
+	cursor: pointer;
+	text-decoration: none;
+	-webkit-tap-highlight-color: transparent;
+	transition: transform .2s ease, background-color .25s ease;
+}
+.lu3g-wa__btn i   { color: #fff; font-size: 32px; line-height: 1; }
+.lu3g-wa__btn svg { fill: #fff; color: #fff; width: 32px; height: 32px; }
+.lu3g-wa__btn i, .lu3g-wa__btn svg { transition: color .2s ease, fill .2s ease, stroke .2s ease; }
+:where(.lu3g-wa) .lu3g-wa__btn:focus { outline: none; }
+:where(.lu3g-wa) .lu3g-wa__btn:focus-visible { outline: 3px solid #1A73E8; outline-offset: 3px; }
+
+/* Pulse */
+.lu3g-wa--pulse .lu3g-wa__btn { animation: lu3g-wa-pulse 2s infinite; }
+.lu3g-wa--pulse.is-open .lu3g-wa__btn { animation: none; }
+@keyframes lu3g-wa-pulse {
+	0%   { box-shadow: 0 0 0 0 var(--lu3g-wa-pulse); }
+	70%  { box-shadow: 0 0 0 16px transparent; }
+	100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* ========== Menu: icona apri/chiudi ========== */
+.lu3g-wa__ico {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform .35s var(--lu3g-wa-ease), opacity .2s ease;
+}
+.lu3g-wa__ico--close { opacity: 0; transform: rotate(-90deg) scale(.4); }
+.lu3g-wa.is-open .lu3g-wa__ico--open  { opacity: 0; transform: rotate(90deg) scale(.4); }
+.lu3g-wa.is-open .lu3g-wa__ico--close { opacity: 1; transform: none; }
+
+/* ==========================================================
+   MENU — parti comuni a tutti i layout
+   ========================================================== */
+.lu3g-wa__menu {
+	position: absolute;
+	display: flex;
+	gap: var(--lu3g-wa-gap);
+	visibility: hidden;
+	transition: visibility 0s linear .45s;
+}
+.lu3g-wa.is-open .lu3g-wa__menu {
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+.lu3g-wa__item {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-decoration: none;
+	opacity: 0;
+	transition: opacity .2s ease, transform .4s var(--lu3g-wa-ease);
+	transition-delay: 0s;
+}
+/* Apertura a cascata: ogni voce parte 50ms dopo la precedente */
+.lu3g-wa.is-open .lu3g-wa__item {
+	opacity: 1;
+	transition-delay: calc(var(--i, 0) * 50ms);
+}
+
+.lu3g-wa__item-icon {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	width: var(--lu3g-wa-item-size);
+	height: var(--lu3g-wa-item-size);
+	border-radius: 50%;
+	background-color: #1A73E8;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+	transition: transform .2s ease;
+}
+.lu3g-wa__item-icon i   { color: #fff; font-size: 20px; line-height: 1; }
+.lu3g-wa__item-icon svg { fill: #fff; color: #fff; width: 20px; height: 20px; }
+
+.lu3g-wa__item:hover .lu3g-wa__item-icon,
+.lu3g-wa__item:focus-visible .lu3g-wa__item-icon { transform: scale(1.1); }
+.lu3g-wa__item:focus { outline: none; }
+/* I temi spesso colorano/sottolineano a:hover, a:active, a:focus: qui non devono toccare le voci */
+.lu3g-wa .lu3g-wa__item:hover,
+.lu3g-wa .lu3g-wa__item:focus,
+.lu3g-wa .lu3g-wa__item:active,
+.lu3g-wa .lu3g-wa__item:visited { color: inherit; text-decoration: none; }
+.lu3g-wa__item:focus-visible .lu3g-wa__item-icon { outline: 3px solid #1A73E8; outline-offset: 3px; }
+
+.lu3g-wa__label {
+	padding: 6px 12px;
+	border-radius: 999px;
+	background-color: #fff;
+	color: #1d1d1f;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.2;
+	white-space: nowrap;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
+}
+
+/* Etichette come tooltip (orizzontale, ventaglio, pillola) */
+.lu3g-wa--tooltips .lu3g-wa__label {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 50%;
+	padding: 4px 10px;
+	font-size: 12px;
+	opacity: 0;
+	transform: translate(-50%, 4px);
+	pointer-events: none;
+	transition: opacity .15s ease, transform .15s ease;
+}
+.lu3g-wa--tooltips .lu3g-wa__item:hover .lu3g-wa__label,
+.lu3g-wa--tooltips .lu3g-wa__item:focus-visible .lu3g-wa__label {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+/* ==========================================================
+   1. VERTICALE — le voci salgono sopra il bottone
+   ========================================================== */
+.lu3g-wa--layout-vertical .lu3g-wa__menu {
+	bottom: calc(100% + var(--lu3g-wa-gap));
+	flex-direction: column-reverse; /* la prima voce è la più vicina al bottone */
+}
+.lu3g-wa--layout-vertical.lu3g-wa--right .lu3g-wa__menu {
+	right: calc((var(--lu3g-wa-size) - var(--lu3g-wa-item-size)) / 2);
+	align-items: flex-end;
+}
+.lu3g-wa--layout-vertical.lu3g-wa--left .lu3g-wa__menu {
+	left: calc((var(--lu3g-wa-size) - var(--lu3g-wa-item-size)) / 2);
+	align-items: flex-start;
+}
+.lu3g-wa--layout-vertical .lu3g-wa__item { transform: translateY(18px) scale(.3); }
+.lu3g-wa--layout-vertical.lu3g-wa--right .lu3g-wa__item { transform-origin: calc(100% - var(--lu3g-wa-item-size) / 2) 50%; }
+.lu3g-wa--layout-vertical.lu3g-wa--left .lu3g-wa__item  { flex-direction: row-reverse; transform-origin: calc(var(--lu3g-wa-item-size) / 2) 50%; }
+.lu3g-wa--layout-vertical.is-open .lu3g-wa__item { transform: none; }
+
+/* ==========================================================
+   2. ORIZZONTALE — le voci escono di lato, verso il centro
+   ========================================================== */
+.lu3g-wa--layout-horizontal .lu3g-wa__menu {
+	bottom: calc((var(--lu3g-wa-size) - var(--lu3g-wa-item-size)) / 2);
+	align-items: center;
+}
+.lu3g-wa--layout-horizontal.lu3g-wa--right .lu3g-wa__menu { right: calc(var(--lu3g-wa-size) + var(--lu3g-wa-gap)); flex-direction: row-reverse; }
+.lu3g-wa--layout-horizontal.lu3g-wa--left .lu3g-wa__menu  { left: calc(var(--lu3g-wa-size) + var(--lu3g-wa-gap)); flex-direction: row; }
+.lu3g-wa--layout-horizontal.lu3g-wa--right .lu3g-wa__item { transform: translateX(18px) scale(.3); }
+.lu3g-wa--layout-horizontal.lu3g-wa--left .lu3g-wa__item  { transform: translateX(-18px) scale(.3); }
+.lu3g-wa--layout-horizontal.is-open .lu3g-wa__item { transform: none; }
+
+/* ==========================================================
+   3. VENTAGLIO — le voci si aprono a quarto di cerchio
+   ========================================================== */
+.lu3g-wa--layout-fan { --lu3g-wa-radius: 110px; }
+.lu3g-wa--layout-fan .lu3g-wa__menu {
+	bottom: calc((var(--lu3g-wa-size) - var(--lu3g-wa-item-size)) / 2);
+	width: var(--lu3g-wa-item-size);
+	height: var(--lu3g-wa-item-size);
+}
+.lu3g-wa--layout-fan.lu3g-wa--right .lu3g-wa__menu { right: calc((var(--lu3g-wa-size) - var(--lu3g-wa-item-size)) / 2); }
+.lu3g-wa--layout-fan.lu3g-wa--left .lu3g-wa__menu  { left: calc((var(--lu3g-wa-size) - var(--lu3g-wa-item-size)) / 2); }
+.lu3g-wa--layout-fan .lu3g-wa__item {
+	position: absolute;
+	inset: 0;
+	/* angolo da 0° (sopra) a 90° (di lato), distribuito sul numero di voci */
+	--a: calc(90deg * var(--i, 0) / max(var(--n, 1) - 1, 1));
+	transform: scale(.3);
+}
+.lu3g-wa--layout-fan.lu3g-wa--right.is-open .lu3g-wa__item {
+	transform: translate(calc(var(--lu3g-wa-radius) * sin(var(--a)) * -1), calc(var(--lu3g-wa-radius) * cos(var(--a)) * -1));
+}
+.lu3g-wa--layout-fan.lu3g-wa--left.is-open .lu3g-wa__item {
+	transform: translate(calc(var(--lu3g-wa-radius) * sin(var(--a))), calc(var(--lu3g-wa-radius) * cos(var(--a)) * -1));
+}
+
+/* ==========================================================
+   4. PILLOLA — il bottone si allunga in una barra con le icone
+   ========================================================== */
+.lu3g-wa--layout-pill .lu3g-wa__btn { z-index: 1; }
+.lu3g-wa--layout-pill .lu3g-wa__menu {
+	bottom: 0;
+	z-index: 0;
+	height: var(--lu3g-wa-size);
+	align-items: center;
+	gap: 4px;
+	background-color: #fff;
+	color: #1d1d1f;
+	border-radius: 999px;
+	transition: clip-path .45s cubic-bezier(.65, 0, .35, 1), visibility 0s linear .45s;
+}
+/* Da chiusa la pillola è un cerchio nascosto sotto il bottone */
+.lu3g-wa--layout-pill.lu3g-wa--right .lu3g-wa__menu {
+	right: 0;
+	flex-direction: row-reverse;
+	padding: 0 calc(var(--lu3g-wa-size) + 6px) 0 10px;
+	clip-path: inset(0 0 0 calc(100% - var(--lu3g-wa-size)) round 999px);
+}
+.lu3g-wa--layout-pill.lu3g-wa--left .lu3g-wa__menu {
+	left: 0;
+	flex-direction: row;
+	padding: 0 10px 0 calc(var(--lu3g-wa-size) + 6px);
+	clip-path: inset(0 calc(100% - var(--lu3g-wa-size)) 0 0 round 999px);
+}
+.lu3g-wa--layout-pill.is-open .lu3g-wa__menu {
+	clip-path: inset(0 round 999px);
+	transition: clip-path .45s cubic-bezier(.65, 0, .35, 1);
+}
+/* Voci: solo icona, niente cerchio, un unico colore */
+.lu3g-wa.lu3g-wa--layout-pill .lu3g-wa__menu .lu3g-wa__item-icon {
+	width: calc(var(--lu3g-wa-size) * .72);
+	height: calc(var(--lu3g-wa-size) * .72);
+	background-color: transparent;
+	box-shadow: none;
+}
+.lu3g-wa.lu3g-wa--layout-pill .lu3g-wa__menu .lu3g-wa__item-icon i   { color: currentColor; }
+.lu3g-wa.lu3g-wa--layout-pill .lu3g-wa__menu .lu3g-wa__item-icon svg { fill: currentColor; color: currentColor; }
+.lu3g-wa--layout-pill .lu3g-wa__item { color: inherit; }
+.lu3g-wa--layout-pill.lu3g-wa--right .lu3g-wa__item { transform: translateX(10px); }
+.lu3g-wa--layout-pill.lu3g-wa--left .lu3g-wa__item  { transform: translateX(-10px); }
+.lu3g-wa--layout-pill.is-open .lu3g-wa__item {
+	transform: none;
+	transition-delay: calc(150ms + var(--i, 0) * 40ms);
+}
+/* Divisori sottili tra le icone */
+.lu3g-wa--layout-pill .lu3g-wa__item + .lu3g-wa__item::after {
+	content: "";
+	position: absolute;
+	top: 30%;
+	bottom: 30%;
+	width: 1px;
+	background-color: currentColor;
+	opacity: .18;
+}
+.lu3g-wa--layout-pill.lu3g-wa--right .lu3g-wa__item + .lu3g-wa__item::after { right: -2.5px; }
+.lu3g-wa--layout-pill.lu3g-wa--left .lu3g-wa__item + .lu3g-wa__item::after  { left: -2.5px; }
+
+/* ==========================================================
+   5. CARD — scheda con titolo e contatti descritti
+   ========================================================== */
+.lu3g-wa--layout-card { --lu3g-wa-card-icon: 40px; }
+.lu3g-wa--layout-card .lu3g-wa__menu {
+	bottom: calc(100% + 14px);
+	flex-direction: column;
+	align-items: stretch;
+	gap: 2px;
+	width: var(--lu3g-wa-card-w, 300px);
+	max-width: calc(100vw - 2 * var(--lu3g-wa-x));
+	padding: 18px 10px 10px;
+	background-color: #fff;
+	color: #1d1d1f;
+	border-radius: 16px;
+	box-shadow: 0 16px 48px rgba(0, 0, 0, .18);
+	line-height: 1.4;
+	opacity: 0;
+	transform: translateY(12px) scale(.94);
+	transition: opacity .2s ease, transform .35s var(--lu3g-wa-ease), visibility 0s linear .35s;
+}
+.lu3g-wa--layout-card.lu3g-wa--right .lu3g-wa__menu { right: 0; transform-origin: bottom right; }
+.lu3g-wa--layout-card.lu3g-wa--left .lu3g-wa__menu  { left: 0; transform-origin: bottom left; }
+.lu3g-wa--layout-card.is-open .lu3g-wa__menu {
+	opacity: 1;
+	transform: none;
+	transition: opacity .2s ease, transform .35s var(--lu3g-wa-ease);
+}
+
+.lu3g-wa__card-head { padding: 0 8px 10px; }
+.lu3g-wa__card-title {
+	margin: 0;
+	color: inherit;
+	font-size: 17px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+.lu3g-wa__card-text {
+	margin: 4px 0 0;
+	color: inherit;
+	font-size: 13px;
+	opacity: .7;
+	white-space: pre-line;
+}
+
+.lu3g-wa--layout-card .lu3g-wa__item {
+	gap: 12px;
+	padding: 8px;
+	border-radius: 10px;
+	color: inherit;
+	transform: translateY(6px);
+	transition: opacity .2s ease, transform .3s ease, background-color .2s ease;
+}
+.lu3g-wa--layout-card.is-open .lu3g-wa__item {
+	transform: none;
+	transition-delay: calc(80ms + var(--i, 0) * 40ms), calc(80ms + var(--i, 0) * 40ms), 0s;
+}
+.lu3g-wa--layout-card .lu3g-wa__item:hover,
+.lu3g-wa--layout-card .lu3g-wa__item:focus-visible { background-color: rgba(0, 0, 0, .05); }
+.lu3g-wa--layout-card .lu3g-wa__item:hover .lu3g-wa__item-icon { transform: none; }
+.lu3g-wa--layout-card .lu3g-wa__item-icon {
+	width: var(--lu3g-wa-card-icon);
+	height: var(--lu3g-wa-card-icon);
+	box-shadow: none;
+}
+.lu3g-wa__item-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+.lu3g-wa__item-name {
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+.lu3g-wa__item-detail {
+	overflow: hidden;
+	font-size: 13px;
+	line-height: 1.3;
+	opacity: .65;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ==========================================================
+   BARRA MOBILE — visibile solo sotto il breakpoint mobile
+   (le media query sono generate dal plugin coi breakpoint di Elementor)
+   ========================================================== */
+.lu3g-wa-bar {
+	--lu3g-wa-bar-h: 62px;
+	--lu3g-wa-bar-r: 60px;
+	--lu3g-wa-bar-x: 16px;
+	--lu3g-wa-bar-y: 16px;
+	--lu3g-wa-bar-max: 480px;
+	--lu3g-wa-bar-divider: rgba(0, 0, 0, .08);
+	--lu3g-wa-glass-tint: rgba(255, 255, 255, .32);
+	--lu3g-wa-glass-blur: 14px;
+	--lu3g-wa-glass-shine: .6;
+	--lu3g-wa-bar-item-max: 220px;
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 9999;
+	display: none;
+	justify-content: center; /* su schermi larghi le voci restano raccolte al centro */
+	height: calc(var(--lu3g-wa-bar-h) + env(safe-area-inset-bottom, 0px));
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+	overflow: hidden; /* lo sfondo "attivo" delle voci segue gli angoli arrotondati */
+	background-color: #fff;
+	color: #1d1d1f;
+	border-top: 1px solid var(--lu3g-wa-bar-divider);
+	box-shadow: 0 -4px 20px rgba(0, 0, 0, .06);
+	line-height: 1.2;
+	animation: lu3g-wa-bar-in .4s ease both;
+}
+
+/* Variante pillola fluttuante: staccata dai bordi, angoli arrotondati */
+.lu3g-wa-bar.lu3g-wa-bar--floating {
+	right: 0;
+	left: 0;
+	bottom: calc(var(--lu3g-wa-bar-y) + env(safe-area-inset-bottom, 0px));
+	width: calc(100% - 2 * var(--lu3g-wa-bar-x));
+	max-width: var(--lu3g-wa-bar-max);
+	height: var(--lu3g-wa-bar-h);
+	margin-inline: auto;
+	padding-bottom: 0;
+	padding-inline: calc(var(--lu3g-wa-bar-r) * .25); /* le voci ai lati non finiscono sotto la curva */
+	border: 1px solid var(--lu3g-wa-bar-divider);
+	border-radius: var(--lu3g-wa-bar-r);
+	box-shadow: 0 10px 30px rgba(0, 0, 0, .15);
+}
+
+/* ---------- Effetto vetro (liquid glass) ----------
+   Tre strati: il vetro vero e proprio (sfocatura + saturazione dello sfondo),
+   un riflesso morbido in alto (::before) e un bordo luminoso sfumato (::after). */
+nav.lu3g-wa-bar.lu3g-wa-bar--glass {
+	background-color: var(--lu3g-wa-glass-tint);
+	border-color: transparent;
+	-webkit-backdrop-filter: blur(var(--lu3g-wa-glass-blur)) saturate(180%);
+	backdrop-filter: blur(var(--lu3g-wa-glass-blur)) saturate(180%);
+}
+.lu3g-wa-bar--glass::before,
+.lu3g-wa-bar--glass::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+}
+/* Riflesso: luce che scende dall'alto e un filo luminoso interno */
+.lu3g-wa-bar--glass::before {
+	background: linear-gradient(180deg, rgba(255, 255, 255, .55) 0%, rgba(255, 255, 255, 0) 55%);
+	box-shadow:
+		inset 0 1px 1px rgba(255, 255, 255, .9),
+		inset 0 -1px 1px rgba(255, 255, 255, .25),
+		inset 0 0 18px rgba(255, 255, 255, .25);
+	opacity: var(--lu3g-wa-glass-shine);
+}
+/* Bordo: più luminoso sugli spigoli in alto a sinistra e in basso a destra */
+.lu3g-wa-bar--glass::after {
+	padding: 1px;
+	background: linear-gradient(135deg,
+		rgba(255, 255, 255, .95) 0%,
+		rgba(255, 255, 255, .15) 35%,
+		rgba(255, 255, 255, .05) 65%,
+		rgba(255, 255, 255, .7) 100%);
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+	opacity: calc(.4 + var(--lu3g-wa-glass-shine) * .6);
+}
+.lu3g-wa-bar--glass .lu3g-wa-bar__item { position: relative; z-index: 1; }
+.lu3g-wa-bar--glass .lu3g-wa-bar__item + .lu3g-wa-bar__item { border-left-color: rgba(255, 255, 255, .25); }
+
+/* Rifrazione: solo dove il browser applica filtri SVG allo sfondo (Chromium).
+   La classe sull'<html> la mette lo script dopo aver riconosciuto il browser. */
+html.lu3g-wa-can-refract nav.lu3g-wa-bar.lu3g-wa-bar--refract {
+	-webkit-backdrop-filter: url(#lu3g-wa-refract) blur(var(--lu3g-wa-glass-blur)) saturate(180%);
+	backdrop-filter: url(#lu3g-wa-refract) blur(var(--lu3g-wa-glass-blur)) saturate(180%);
+}
+.lu3g-wa-svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* Senza supporto al vetro, o se l'utente chiede meno trasparenza: fondo pieno leggibile */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	nav.lu3g-wa-bar.lu3g-wa-bar--glass { background-color: rgba(255, 255, 255, .94); }
+}
+@media (prefers-reduced-transparency: reduce) {
+	nav.lu3g-wa-bar.lu3g-wa-bar--glass {
+		background-color: rgba(255, 255, 255, .96);
+		-webkit-backdrop-filter: none;
+		backdrop-filter: none;
+	}
+}
+
+/* Stati blindati: i temi spesso colorano a:hover / a:active / a:focus e sottolineano i link */
+.lu3g-wa-bar .lu3g-wa-bar__item,
+.lu3g-wa-bar .lu3g-wa-bar__item:hover,
+.lu3g-wa-bar .lu3g-wa-bar__item:focus,
+.lu3g-wa-bar .lu3g-wa-bar__item:active,
+.lu3g-wa-bar .lu3g-wa-bar__item:visited {
+	color: inherit;
+	text-decoration: none;
+	outline: none;
+}
+.lu3g-wa-bar__item {
+	display: flex;
+	flex: 1 1 0;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	min-width: 0;
+	max-width: var(--lu3g-wa-bar-item-max);
+	font-size: 11px;
+	font-weight: 500;
+	transition: background-color .15s ease, color .15s ease;
+	-webkit-tap-highlight-color: transparent;
+}
+.lu3g-wa-bar__item + .lu3g-wa-bar__item { border-left: 1px solid var(--lu3g-wa-bar-divider); }
+.lu3g-wa-bar--floating .lu3g-wa-bar__item + .lu3g-wa-bar__item { border-left: 0; }
+.lu3g-wa-bar__item i   { color: inherit; font-size: 20px; line-height: 1; transition: color .15s ease; }
+.lu3g-wa-bar__item svg { width: 20px; height: 20px; fill: currentColor; color: inherit; transition: fill .15s ease, color .15s ease; }
+.lu3g-wa-bar__label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Stato hover/attivo predefinito (sovrascrivibile dal tab "Hover / Attivo") */
+@media (hover: hover) {
+	.lu3g-wa-bar .lu3g-wa-bar__item:hover { background-color: rgba(0, 0, 0, .05); }
+}
+.lu3g-wa-bar .lu3g-wa-bar__item:active,
+.lu3g-wa-bar .lu3g-wa-bar__item:focus-visible { background-color: rgba(0, 0, 0, .05); }
+.lu3g-wa-bar .lu3g-wa-bar__item:focus-visible { box-shadow: inset 0 0 0 2px currentColor; }
+
+@keyframes lu3g-wa-bar-in {
+	from { transform: translateY(calc(100% + 40px)); }
+	to   { transform: none; }
+}
+
+/* ==========================================================
+   Movimento ridotto
+   ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+	.lu3g-wa__btn,
+	.lu3g-wa__ico,
+	.lu3g-wa__menu,
+	.lu3g-wa__item,
+	.lu3g-wa__item-icon { transition: none !important; }
+	.lu3g-wa--layout-vertical .lu3g-wa__item,
+	.lu3g-wa--layout-horizontal .lu3g-wa__item,
+	.lu3g-wa--layout-pill .lu3g-wa__item,
+	.lu3g-wa--layout-card .lu3g-wa__item,
+	.lu3g-wa--layout-card .lu3g-wa__menu { transform: none !important; }
+	.lu3g-wa--layout-fan:not(.is-open) .lu3g-wa__item { transform: none !important; }
+	.lu3g-wa--pulse .lu3g-wa__btn,
+	.lu3g-wa-bar { animation: none; }
+}
+
+/* ==========================================================
+   Solo editor Elementor
+   ========================================================== */
+.lu3g-wa-placeholder {
+	padding: 10px 14px;
+	border: 1px dashed #25D366;
+	font-size: 12px;
+	line-height: 1.4;
+	color: #555;
+	text-align: center;
+}
