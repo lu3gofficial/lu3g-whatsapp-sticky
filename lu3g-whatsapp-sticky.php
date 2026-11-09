@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LU3G WhatsApp Sticky
  * Description: Widget Elementor per un bottone sticky WhatsApp oppure un menu contatti espandibile (WhatsApp, chiamata, email, Google Maps).
- * Version:     1.4.1
+ * Version:     1.4.2
  * Plugin URI:  https://github.com/lu3gofficial/lu3g-whatsapp-sticky
  * Update URI:  https://github.com/lu3gofficial/lu3g-whatsapp-sticky
  * Author:      LU3G Agenzia Web
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LU3G_WA_VERSION', '1.4.1' );
+define( 'LU3G_WA_VERSION', '1.4.2' );
 define( 'LU3G_WA_URL', plugin_dir_url( __FILE__ ) );
 define( 'LU3G_WA_PATH', plugin_dir_path( __FILE__ ) );
 
